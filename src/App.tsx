@@ -1,12 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 function App() {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const firstRender = useRef(true);
   const [input, setInput] = useState("");
   const [task, setTask] = useState<string[]>([]);
+
   const [edit, setEdit] = useState({
     enable: false,
     task: "",
   });
+
+  useEffect(() => {
+    const tarefasSalvas = localStorage.getItem("@cursoreact");
+
+    if (tarefasSalvas) {
+      setTask(JSON.parse(tarefasSalvas));
+    }
+  }, []);
+
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    localStorage.setItem("@cursoreact", JSON.stringify(task));
+  }, [task]);
 
   const handleRegister = () => {
     if (!input) {
@@ -43,6 +62,7 @@ function App() {
   };
 
   const handleEdit = (item: string) => {
+    inputRef.current?.focus();
     setInput(item);
     setEdit({
       enable: true,
@@ -57,6 +77,7 @@ function App() {
         placeholder="Digite o nome da tarefa..."
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        ref={inputRef}
       />
       <button onClick={handleRegister}>
         {edit.enable ? "Atualizar tarefa" : "Adicionar tarefa"}
