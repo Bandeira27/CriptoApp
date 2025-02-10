@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 
 function App() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -27,7 +27,7 @@ function App() {
     localStorage.setItem("@cursoreact", JSON.stringify(task));
   }, [task]);
 
-  const handleRegister = () => {
+  const handleRegister = useCallback(() => {
     if (!input) {
       alert("Preencha o nome da sua tarefa");
       return;
@@ -39,7 +39,7 @@ function App() {
 
     setTask((tarefa) => [...tarefa, input]);
     setInput("");
-  };
+  }, [input, task]);
 
   const handleSaveEdit = () => {
     const findIndexTask = task.findIndex((task) => task === edit.task);
@@ -70,6 +70,10 @@ function App() {
     });
   };
 
+  const totalTarefas = useMemo(() => {
+    return task.length;
+  }, [task]);
+
   return (
     <div>
       <h1>Lista de tarefas</h1>
@@ -83,7 +87,10 @@ function App() {
         {edit.enable ? "Atualizar tarefa" : "Adicionar tarefa"}
       </button>
       <hr />
-      {task.map((item, index) => (
+      <strong>Você tem {totalTarefas} tarefas!</strong>
+      <br />
+      <br />
+      {task.map((item) => (
         <section key={item}>
           <span>{item}</span>
           <button onClick={() => handleEdit(item)}>Editar</button>
