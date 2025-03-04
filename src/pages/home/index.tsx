@@ -3,7 +3,7 @@ import styles from "./home.module.css";
 import { BsSearch } from "react-icons/bs";
 import { Link, useNavigate } from "react-router-dom";
 
-interface CoinProps {
+export interface CoinProps {
   id: string;
   name: string;
   symbol: string;
@@ -33,6 +33,7 @@ export function Home() {
 
   useEffect(() => {
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [offset]);
 
   async function getData() {
