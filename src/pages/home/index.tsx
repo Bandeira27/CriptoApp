@@ -28,14 +28,15 @@ interface DataProp {
 export function Home() {
   const [input, setInput] = useState("");
   const [coins, setCoins] = useState<CoinProps[]>([]);
+  const [offset, setOffset] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [offset]);
 
   async function getData() {
-    fetch("https://api.coincap.io/v2/assets?limit=10&offset=0").then(
+    fetch(`https://api.coincap.io/v2/assets?limit=10&offset=${offset}`).then(
       (response) =>
         response.json().then((data: DataProp) => {
           const coinData = data.data;
@@ -62,7 +63,8 @@ export function Home() {
             return formated;
           });
           // console.log(formatedResult);
-          setCoins(formatedResult);
+          const listCoins = [...coins, ...formatedResult];
+          setCoins(listCoins);
         })
     );
   }
@@ -75,7 +77,14 @@ export function Home() {
     navigate(`./detail/${input}`);
   };
 
-  const handleGetMore = () => {};
+  const handleGetMore = () => {
+    if (offset === 0) {
+      setOffset(10);
+      return;
+    }
+
+    setOffset(offset + 10);
+  };
 
   return (
     <main className={styles.container}>
