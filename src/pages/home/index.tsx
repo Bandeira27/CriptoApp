@@ -75,7 +75,7 @@ export function Home() {
 
     if (input === "") return;
 
-    navigate(`./detail/${input}`);
+    navigate(`./detail/${input.toLowerCase()}`);
   };
 
   const handleGetMore = () => {
