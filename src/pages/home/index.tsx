@@ -28,6 +28,7 @@ interface DataProp {
 export function Home() {
   const [input, setInput] = useState("");
   const [coins, setCoins] = useState<CoinProps[]>([]);
+  const [suggestion, setSuggestion] = useState<CoinProps[]>([]);
   const [offset, setOffset] = useState(0);
   const navigate = useNavigate();
 
@@ -87,6 +88,20 @@ export function Home() {
     setOffset(offset + 10);
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInput(value);
+
+    if (value.length > 0) {
+      const filteredCoins = coins.filter((item) =>
+        item.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setSuggestion(filteredCoins);
+    } else {
+      setSuggestion([]);
+    }
+  };
+
   return (
     <main className={styles.container}>
       <form className={styles.form} onSubmit={handleSubmit}>
@@ -94,12 +109,28 @@ export function Home() {
           type="text"
           placeholder="Digite o nome da moeda..."
           value={input}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={handleInputChange}
         />
         <button type="submit">
           <BsSearch size={30} color="#FFF" />
         </button>
       </form>
+
+      {suggestion.length > 0 && (
+        <ul>
+          {suggestion.map((item) => (
+            <li
+              key={item.id}
+              onClick={() => {
+                setInput(item.name);
+                setSuggestion([]);
+              }}
+            >
+              ({item.symbol}) {item.name}
+            </li>
+          ))}
+        </ul>
+      )}
 
       <table>
         <thead>
